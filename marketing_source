@@ -5,11 +5,11 @@ IFS(
   defined(@"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@),@"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@,
   
    //Android App Referrers
-  REGEX_MATCH(@"""{"label":"Referrer","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referrer"}"""@,"com.google"), "Android App",
+  REGEX_MATCH(@"""{"label":"Referrer","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referrer"}"""@,"com.google"), "android app",
   
   // IF Referrer is defined and not an empty string
   defined(@"""{"label":"Referrer","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referrer"}"""@) and NOT @"""{"label":"Referrer","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referrer"}"""@="", PARSE_URL(@"""{"label":"Referrer","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referrer"}"""@,"domain"),
   
   // Else Direct
-  TRUE, "Direct"
+  TRUE, "direct"
   )
