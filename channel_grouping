@@ -1,0 +1,121 @@
+LET(
+    search, ["360.cn", "alice", "aol", "ask", "baidu", "biglobe", "bing", "brave", "centrum.cz", "comcast", "conduit", "daum", "dogpile", "duckduckgo", "ecosia", "eniro", "excite.com", "globo", "go.mail.ru", "google", "google-play", "hk.search.yahoo.com", "id.search.yahoo.com", "in.search.yahoo.com",  "incredimail", "kvasir", "lycos", "m.baidu.com", "m.naver.com", "m.search.naver.com", "m.sogou.com", "mail.rambler.ru", "mail.yandex.ru", "malaysia.search.yahoo.com", "msearch.shopping.naver.com", "msn", "msn.com", "mx.search.yahoo.com", "najdi", "naver", "naver.com", "news.google.com", "onet", "onet.pl", "pe.search.yahoo.com", "ph.search.yahoo.com",  "pl.search.yahoo.com", "qwant", "qwant.com", "rakuten", "rakuten.co.jp", "rambler", "rambler.ru","search-results", "search.aol.co.uk", "search.aol.com", "search.google.com", "search.smt.docomo.ne.jp", "search.ukr.net", "seznam", "seznam.cz", "sg.search.yahoo.com", "so.com", "sogou", "sogou.com", "sp-web.search.auone.jp", "startsiden", "startsiden.no", "suche.aol.de", "th.search.yahoo.com", "tr.search.yahoo.com", "tut.by", "tw.search.yahoo.com", "uk.search.yahoo.com", "ukr", "us.search.yahoo.com", "virgilio", "webmaster.yandex.ru", "websearch.rakuten.co.jp", "wap.sogou.com", "yahoo", "yahoo.co.jp", "yahoo.com", "yandex","com.google.android.googlequicksearchbox",],
+  
+  LET(
+    social, ["linkedin", "facebook", "twitter", "instagram", "reddit", "pinterest", "facebook.com", "twitter.com", "linkedin.com", "instagram.com", "pinterest.com", "reddit.com", "youtube.com", "tiktok.com", "snapchat.com", "tumblr.com", "flickr.com", "quora.com", "whatsapp.com", "telegram.com", "weibo.com", "vkontakte.ru", "xing.com", "myspace.com", "bebo.com", "friendfeed.com", "meetup.com", "blogspot.com", "wordpress.com", "livejournal.com", "disqus.com", "foursquare.com", "vimeo.com", "deviantart.com", "digg.com", "stumbleupon.com", "buzzfeed.com", "goodreads.com", "mocospace.com", "vk.com", "wechat.com", "medium.com", "hootsuite.com"],
+  
+  LET(
+     paid_channel_medium, ["cpc","ppc","paidsearch"],
+
+  // Exclude events from channel grouping. Events listed below are excluded from channel grouping calculations. Generally these are server side events. 
+  If(@"""{"label":"Event Name","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$event_name"}"""@in ["xx", "xx"], UNDEFINED, 
+  
+// Channel Classifier
+  IFS(
+    // Google Ads
+    @"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@ IN [ "google","Google"]
+    AND  @"""{"label":"UTM Medium","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_medium"}"""@ IN paid_channel_medium,
+    "Google Ads",
+    
+    // Google Ads Initial Referral Fallback
+    // Incase the first pageview is missing, we can look at the initiall referral URL and parse 
+    @"""{"customProperty":{"allow_staff_override":false,"canUpdateBasic":true,"can_share":true,"composedProperties":{"_A":{"label":"Initial Referrer","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$initial_referrer"}},"description":"","displayFormula":"REGEX_EXTRACT( _A ,\".*[&?]utm_source=([^&]+).*\",1)","is_superadmin":true,"joinPropertyType":"string","mappedDataGroupId":null,"name":"initial_referrer utm_source (parsed)","pre_populated_entity_id":null,"propertyType":"string","referencedBy":[5496125],"referencedDirectlyBy":[5496125],"referencedRawEventProperties":["$initial_referrer"],"referencesBorrowedProperty":false,"resourceType":"events","userInfo":{"email":"yalcin@growthanalyticsmarketing.com","id":156740,"name":"yalcin kaya"}},"customPropertyId":5497411,"joinPropertyType":"string","label":"initial_referrer utm_source (parsed)","propertyDefaultType":"string","resourceType":"event","type":"string","value":"initial_referrer utm_source (parsed)"}"""@IN ["google","Google"] OR
+    REGEX_MATCH(@"""{"label":"Initial Referrer","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$initial_referrer"}"""@,"gclid") OR
+      REGEX_MATCH(@"""{"label":"Current URL","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$current_url"}"""@,"gads"),
+    "Google Ads",
+    
+
+    // Facebook Ads
+    @"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@ IN [ "facebook", "Facebook", "fb", "msg", "an"]
+    AND  @"""{"label":"UTM Medium","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_medium"}"""@ IN paid_channel_medium,
+    "Facebook Ads",
+    
+     // Facebook Ads Initial Referral Fallback
+    // Incase the first pageview is missing, we can look at the initiall referral URL and parse 
+    @"""{"customProperty":{"allow_staff_override":false,"canUpdateBasic":true,"can_share":true,"composedProperties":{"_A":{"label":"Initial Referrer","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$initial_referrer"}},"description":"","displayFormula":"REGEX_EXTRACT( _A ,\".*[&?]utm_source=([^&]+).*\",1)","is_superadmin":true,"joinPropertyType":"string","mappedDataGroupId":null,"name":"initial_referrer utm_source (parsed)","pre_populated_entity_id":null,"propertyType":"string","referencedBy":[5496125],"referencedDirectlyBy":[5496125],"referencedRawEventProperties":["$initial_referrer"],"referencesBorrowedProperty":false,"resourceType":"events","userInfo":{"email":"yalcin@growthanalyticsmarketing.com","id":156740,"name":"yalcin kaya"}},"customPropertyId":5497411,"joinPropertyType":"string","label":"initial_referrer utm_source (parsed)","propertyDefaultType":"string","resourceType":"event","type":"string","value":"initial_referrer utm_source (parsed)"}"""@IN [ "facebook", "Facebook", "fb", "msg", "an"] OR REGEX_MATCH(@"""{"label":"Initial Referrer","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$initial_referrer"}"""@,"fbclid"), 
+    "Facebook Ads",
+  
+    // Facebook Organic
+    @"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@ IN [ "facebook", "Facebook", "fb", "msg", "an"]
+    AND  @"""{"label":"UTM Medium","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_medium"}"""@ IN [ "Facebook_Organic","organic_post"]
+    OR PARSE_URL(@"""{"label":"Referring Domain","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referring_domain"}"""@, "domain") IN ["facebook"],
+    "Facebook Organic",
+  
+    // Instagram Ads
+    @"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@ IN [ "instagram","Instagram", "ig"]
+    AND  @"""{"label":"UTM Medium","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_medium"}"""@ IN paid_channel_medium,
+    "Instagram Ads",
+  
+    // Instagram Organic
+    (@"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@ IN [ "instagram","Instagram", "ig"]
+    AND  @"""{"label":"UTM Medium","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_medium"}"""@ IN [ "Instagram_Organic"])
+    OR PARSE_URL(@"""{"label":"Referring Domain","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referring_domain"}"""@, "domain") IN ["instagram"],
+    "Instagram Organic",
+    
+    // Instagram Organic
+    (@"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@ IN [ "instagram","Instagram", "ig"]),
+    "Instagram",
+    
+    // Email
+     @"""{"label":"UTM Medium","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_medium"}"""@ IN [ "email", "Email", "pdf"],
+    "Email",
+  
+    // Youtube Organic
+    @"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@ IN [ "Youtube","youtube", "yt"]
+    AND  @"""{"label":"UTM Medium","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_medium"}"""@ IN [ "Description", "Organtic", "Youtube_Organic"]
+    OR PARSE_URL(@"""{"label":"Referring Domain","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referring_domain"}"""@, "domain") IN ["youtube"],
+    "Youtube Organic",
+  
+    // Tiktok Organic
+    @"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@ IN [ "TikTok","tiktok"]
+        AND  @"""{"label":"UTM Medium","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_medium"}"""@ IN [ "TikTok_Organic"]
+        OR PARSE_URL(@"""{"label":"Referring Domain","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referring_domain"}"""@, "domain") IN ["tiktok"],
+    "TikTok",
+
+    // Pinterest 
+    PARSE_URL(@"""{"label":"Referring Domain","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referring_domain"}"""@, "domain") IN ["pinterest"] 
+    OR @"""{"label":"Referring Domain","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referring_domain"}"""@IN ["com.pinterest"],
+    "Pinterest",
+
+    // Reddit
+    PARSE_URL(@"""{"label":"Referring Domain","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referring_domain"}"""@, "domain") IN ["reddit"],
+    "Reddit",
+    
+    //Affiliates
+    REGEX_MATCH(@"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@,"af_"), 
+    "Affiliates",
+  
+    // Forum
+    (@"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@ IN [ "forum"] 
+    AND  @"""{"label":"UTM Medium","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_medium"}"""@ IN [ "banner"]) 
+    OR REGEX_MATCH(@"""{"label":"Referrer","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referrer"}"""@, "tattooing101.com/forums/"),
+    "Forum",
+
+    // Excluding your own website's domain so it doesn't get counted as "Referral".
+    @"""{"label":"Referring Domain","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referring_domain"}"""@ in @"""{"label":"Current URL","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$current_url"}"""@, UNDEFINED,
+    
+    // Social Other
+    (@"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@ IN social  
+    OR @"""{"label":"Referring Domain","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referring_domain"}"""@ IN social OR PARSE_URL(@"""{"label":"Referring Domain","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referring_domain"}"""@, "domain") IN social),
+    "Social Other",
+    
+     // Ads Other
+    DEFINED(@"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@ ) 
+    OR DEFINED( @"""{"label":"UTM Medium","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_medium"}"""@ ),
+    "Ads Other",
+  
+    // Organic Search
+    (@"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@ IN search 
+    OR @"""{"label":"Referring Domain","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referring_domain"}"""@ IN search 
+    OR PARSE_URL(@"""{"label":"Referring Domain","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referring_domain"}"""@, "domain") IN search
+    or PARSE_URL(@"""{"label":"Initial Referrer","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$initial_referrer"}"""@, "domain") in search),
+    "Organic search",
+  
+    // Referral
+    NOT @"""{"label":"Referring Domain","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referring_domain"}"""@="" 
+    AND DEFINED(  @"""{"label":"Referring Domain","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$referring_domain"}"""@),
+    "Referrals",
+  
+    // Direct. If there is no tracked UTM Source, UTM Medium or Referring Domain, channel is "Direct"
+    TRUE, "Direct"
+  )))))
