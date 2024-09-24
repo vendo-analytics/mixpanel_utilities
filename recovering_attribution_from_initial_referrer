@@ -1,0 +1,10 @@
+// First parse the initial referrer 
+REGEX_EXTRACT( _A ,".*[&?]utm_source=([^&]+).*",1)
+REGEX_EXTRACT( _A ,".*[&?]utm_medium=([^&]+).*",1)
+
+// Then use that to add additional rules for attribution. Below is for Google Ads Initial Referral Fallback
+@"""{"customProperty":{"allow_staff_override":false,"canUpdateBasic":true,"can_share":true,"composedProperties":{"_A":{"label":"Initial Referrer","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$initial_referrer"}},"description":"","displayFormula":"REGEX_EXTRACT( _A ,\".*[&?]utm_source=([^&]+).*\",1)","is_superadmin":true,"joinPropertyType":"string","mappedDataGroupId":null,"name":"initial_referrer utm_source (parsed)","pre_populated_entity_id":null,"propertyType":"string","referencedBy":[5496125],"referencedDirectlyBy":[5496125],"referencedRawEventProperties":["$initial_referrer"],"referencesBorrowedProperty":false,"resourceType":"events","userInfo":{"email":"yalcin@growthanalyticsmarketing.com","id":156740,"name":"yalcin kaya"}},"customPropertyId":5497411,"joinPropertyType":"string","label":"initial_referrer utm_source (parsed)","propertyDefaultType":"string","resourceType":"event","type":"string","value":"initial_referrer utm_source (parsed)"}"""@IN ["google","Google"] OR
+    REGEX_MATCH(@"""{"label":"Initial Referrer","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$initial_referrer"}"""@,"gclid") OR
+      REGEX_MATCH(@"""{"label":"Current URL","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$current_url"}"""@,"gads"),
+    "Google Ads",
+    
