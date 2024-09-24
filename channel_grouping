@@ -24,6 +24,10 @@ LET(
       REGEX_MATCH(@"""{"label":"Current URL","propertyDefaultType":"string","resourceType":"event","type":"string","value":"$current_url"}"""@,"gads"),
     "Google Ads",
     
+    // Bing Ads
+    @"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@ in ["bing"] AND
+    @"""{"label":"UTM Medium","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_medium"}"""@ IN paid_channel_medium,
+    "Bing Ads",
 
     // Facebook Ads
     @"""{"label":"UTM Source","propertyDefaultType":"string","resourceType":"event","type":"string","value":"utm_source"}"""@ IN [ "facebook", "Facebook", "fb", "msg", "an"]
